@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #70ef5f;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #quiz-container {
+            width: 350px;
+            background: #222;
+            color: white;
+            padding: 15px;
+            height: 70vh;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        li {
+            font-size: 16px;
+        }
+
+        .option {
+            background: #333;
+            margin-left: auto;
+            margin-right: auto;
+            color: white;
+            border: 2px solid #555;
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: center;
+            transition: 0.2s ease;
+        }
+
+        .option:hover {
+            background: #444;
+        }
+
+        .option.selected {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .option.wrong {
+            background: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        #question {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #result {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+
+        #next-btn {
+            background: #f39c12;
+            border: none;
+            color: white;
+            font-size: 20px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 23px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #next-btn:hover {
+            background: #e67e22;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="quiz-container">
+        <h2 id="question">Question text</h2>
+        <ul id="options"></ul>
+        <button id="next-btn">Next</button>
+        <div id="result">
+
+        </div>
+    </div>
+
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the difference between var, let, and const?",
+                options: [
+                    "var is function-scoped, let and const are block-scoped",
+                    "var is block-scoped, let and const are function-scoped",
+                    "No difference",
+                    "var and let are same, const is different"
+                ],
+                answer: "var is function-scoped, let and const are block-scoped"
+            },
+            {
+                question: "Which of the following is a JavaScript data type?",
+                options: ["String", "Number", "Boolean", "All of the above"],
+                answer: "All of the above"
+            },
+            {
+                question: "What does '===' operator do in JavaScript?",
+                options: [
+                    "Checks only value",
+                    "Checks only type",
+                    "Checks value and type",
+                    "None of the above"
+                ],
+                answer: "Checks value and type"
+            },
+            {
+                question: "Which method is used to parse a string to an integer?",
+                options: ["Number()", "parseInt()", "parseFloat()", "toString()"],
+                answer: "parseInt()"
+            },
+            {
+                question: "What is the output of: console.log(typeof NaN)?",
+                options: ["number", "NaN", "undefined", "object"],
+                answer: "number"
+            },
+            {
+                question: "Which of these is NOT a JavaScript framework?",
+                options: ["React", "Angular", "Vue", "Django"],
+                answer: "Django"
+            },
+            {
+                question: "How can you create an object in JavaScript?",
+                options: [
+                    "Using object literal {}",
+                    "Using new Object()",
+                    "Both of the above",
+                    "None of the above"
+                ],
+                answer: "Both of the above"
+            },
+            {
+                question: "What is a closure in JavaScript?",
+                options: [
+                    "A function having access to its own scope only",
+                    "A function having access to outer function's variables even after the outer function has executed",
+                    "A variable inside a function",
+                    "None of the above"
+                ],
+                answer: "A function having access to outer function's variables even after the outer function has executed"
+            },
+            {
+                question: "Which method adds one or more elements to the end of an array?",
+                options: ["pop()", "push()", "shift()", "unshift()"],
+                answer: "push()"
+            },
+            {
+                question: "Which method removes the first element from an array?",
+                options: ["shift()", "pop()", "unshift()", "slice()"],
+                answer: "shift()"
+            },
+            {
+                question: "Which symbol is used for comments in JavaScript?",
+                options: ["//", "/* */", "#", "Both // and /* */"],
+                answer: "Both // and /* */"
+            },
+            {
+                question: "What will '0 == false' return?",
+                options: ["true", "false", "undefined", "Error"],
+                answer: "true"
+            },
+            {
+                question: "What will '0 === false' return?",
+                options: ["true", "false", "undefined", "Error"],
+                answer: "false"
+            },
+            {
+                question: "Which method converts JSON to a JavaScript object?",
+                options: ["JSON.stringify()", "JSON.parse()", "JSON.object()", "JSON.convert()"],
+                answer: "JSON.parse()"
+            },
+            {
+                question: "Which method converts a JavaScript object to JSON?",
+                options: ["JSON.stringify()", "JSON.parse()", "JSON.object()", "JSON.convert()"],
+                answer: "JSON.stringify()"
+            },
+            {
+                question: "What is the use of the 'bind' method?",
+                options: [
+                    "It binds a function to an object permanently",
+                    "It calls the function immediately",
+                    "It creates a new function with a different name",
+                    "None of the above"
+                ],
+                answer: "It binds a function to an object permanently"
+            },
+            {
+                question: "Which of the following is NOT a primitive data type in JavaScript?",
+                options: ["String", "Boolean", "Object", "Number"],
+                answer: "Object"
+            },
+            {
+                question: "Which keyword is used to handle errors in JavaScript?",
+                options: ["try-catch", "throw", "error", "catch-only"],
+                answer: "try-catch"
+            },
+            {
+                question: "Which method checks if an array includes a certain value?",
+                options: ["indexOf()", "includes()", "find()", "some()"],
+                answer: "includes()"
+            },
+            {
+                question: "What will 'typeof null' return?",
+                options: ["null", "object", "undefined", "NaN"],
+                answer: "object"
+            }
+        ];
+
+        console.log(quizData);
+
+
+        //Variables to Track State
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionEl = document.getElementById("question");
+        const optionsEl = document.getElementById("options");
+        const nextBtn = document.getElementById("next-btn");
+        const result = document.getElementById("result")
+        function showQuestion() {
+            const q = quizData[currentQuestion];
+            questionEl.textContent = `Q${currentQuestion + 1}.${" "}${q.question}`;
+            optionsEl.innerHTML = "";
+
+            q.options.forEach(option => {
+                const li = document.createElement("li");
+                li.textContent = option;
+                li.classList.add("option");
+                li.addEventListener("click", () => selectAnswer(option, li));
+                optionsEl.appendChild(li);
+            });
+            nextBtn.style.display = "none";
+        }
+
+        function selectAnswer(selected, button) {
+            const correct = quizData[currentQuestion].answer;
+            const allButtons = document.querySelectorAll(".option");
+
+            allButtons.forEach(btn => {
+                btn.style.pointerEvents = "none";
+                btn.style.opacity = "0.6";
+                if (btn.textContent === correct) {
+                    btn.classList.add("selected");
+                } else if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add("wrong");
+                }
+            });
+
+            if (selected === correct) score++;
+            nextBtn.style.display = "block";
+        }
+
+
+        nextBtn.addEventListener("click", () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        function showResult() {
+            questionEl.textContent = "Quiz Finished! 🎉";
+            optionsEl.innerHTML = "";
+            nextBtn.style.display = "none";
+            let performance = "";
+            let imgSrc="";
+
+            if (score <= 5) {
+                performance = "Poor Performance 😞";
+                imgSrc = "https://images.unsplash.com/photo-1624395213232-ea2bcd36b865?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687";
+            } else if (score <= 10) {
+                performance = "Good Performance 👍";
+                imgSrc = "https://images.unsplash.com/photo-1529111290557-82f6d5c6cf85?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=693";
+            } else {
+                performance = "Excellent Performance 🏆";
+                imgSrc = "https://plus.unsplash.com/premium_photo-1713102865508-34730408962b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=688";
+            }
+            result.innerHTML = `
+               <h3>${performance}</h3>
+      <p>Your Score: ${score}/${quizData.length}</p>
+        <img src="${imgSrc}" alt="Result Image" style="width:100px; margin:20px; border-radius:10px;">
+        <button id="retry-btn" style="
+      background:#f39c12;
+      border:none;
+      color:white;
+      font-size:18px;
+      padding:10px 20px;
+      border-radius:6px;
+      cursor:pointer;
+      margin-top:15px;
+    ">Try Again 🔁</button>
+    `;
+            const retryBtn = document.getElementById("retry-btn");
+            retryBtn.addEventListener("click", restartQuiz);
+        }
+        showQuestion();
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            result.innerHTML = "";
+            showQuestion();
+        }
+    </script>
+</body>
+
+</html>
