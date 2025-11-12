@@ -23,11 +23,11 @@
         }
 
         #quiz-container {
-            width: 350px;
+            width: 340px;
             background: #222;
             color: white;
             padding: 15px;
-            height: 70vh;
+            height: 75vh;
             text-align: center;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -91,6 +91,7 @@
             text-transform: uppercase;
             transition: all 0.3s ease;
             color: #fff;
+            display: none;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
@@ -112,14 +113,33 @@
         #next-btn:hover {
             background: #e67e22;
         }
+
+        #timer {
+            background-color: red;
+            padding: 8px;
+            width: 70%;
+            align-items: center;
+            margin: auto;
+            font: 900;
+            border-radius: 10px;
+        }
+        #retry-btn{
+            background-color: rgb(4, 125, 141);
+            padding: 10px 10px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-size: 20px;
+        }
     </style>
 </head>
 
 <body>
 
     <div id="quiz-container">
+        <div id="timer">Time Left: <span id="time">60</span> sec</div>
         <h2 id="question">Question text</h2>
-        <ul id="options"></ul>
+        <ul id="optionforshow"></ul>
         <button id="next-btn">Next</button>
         <div id="result">
 
@@ -263,22 +283,47 @@
 
         let currentQuestion = 0;
         let score = 0;
+        let totaltime = 60;
 
-        const questionEl = document.getElementById("question");
-        const optionsEl = document.getElementById("options");
+
+        const quizContainer = document.getElementById("quiz-container");
+        const questionshowOnscreen = document.getElementById("question");
+        const optionshowOnscreen = document.getElementById("optionforshow");
         const nextBtn = document.getElementById("next-btn");
         const result = document.getElementById("result")
+        const timerdisplay = document.getElementById("time")
+
+
+
+        function startTimer() {
+            timer = setInterval(() => {
+                totaltime--;
+                timerdisplay.textContent = totaltime;
+
+                if (totaltime <= 0) {
+                    clearInterval(timer);
+                    showResult();
+                }
+            }, 1000);
+        }
+        startTimer();
+
         function showQuestion() {
+            result.style.display = "none";
+            questionshowOnscreen.style.display = "block";
+            optionshowOnscreen.style.display = "block";
+            nextBtn.style.display = "block";
+
             const q = quizData[currentQuestion];
-            questionEl.textContent = `Q${currentQuestion + 1}.${" "}${q.question}`;
-            optionsEl.innerHTML = "";
+            questionshowOnscreen.textContent = `Q${currentQuestion + 1}.${" "}${q.question}`;
+            optionshowOnscreen.innerHTML = "";
 
             q.options.forEach(option => {
                 const li = document.createElement("li");
                 li.textContent = option;
                 li.classList.add("option");
                 li.addEventListener("click", () => selectAnswer(option, li));
-                optionsEl.appendChild(li);
+                optionshowOnscreen.appendChild(li);
             });
             nextBtn.style.display = "none";
         }
@@ -312,47 +357,53 @@
         });
 
         function showResult() {
-            questionEl.textContent = "Quiz Finished! 🎉";
-            optionsEl.innerHTML = "";
+            clearInterval(timer);
+            questionshowOnscreen.style.display = "none";
+            optionshowOnscreen.style.display = "none";
             nextBtn.style.display = "none";
+            result.style.display = "block";
+
             let performance = "";
-            let imgSrc="";
+            let imgSrc = "";
 
             if (score <= 5) {
                 performance = "Poor Performance 😞";
-                imgSrc = "https://images.unsplash.com/photo-1624395213232-ea2bcd36b865?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687";
+                imgSrc = "https://images.unsplash.com/photo-1624395213232-ea2bcd36b865?auto=format&fit=crop&q=80&w=687";
             } else if (score <= 10) {
                 performance = "Good Performance 👍";
-                imgSrc = "https://images.unsplash.com/photo-1529111290557-82f6d5c6cf85?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=693";
+                imgSrc = "https://images.unsplash.com/photo-1529111290557-82f6d5c6cf85?auto=format&fit=crop&q=80&w=693";
             } else {
                 performance = "Excellent Performance 🏆";
-                imgSrc = "https://plus.unsplash.com/premium_photo-1713102865508-34730408962b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=688";
+                imgSrc = "https://plus.unsplash.com/premium_photo-1713102865508-34730408962b?auto=format&fit=crop&q=80&w=688";
             }
+
             result.innerHTML = `
-               <h3>${performance}</h3>
-      <p>Your Score: ${score}/${quizData.length}</p>
-        <img src="${imgSrc}" alt="Result Image" style="width:100px; margin:20px; border-radius:10px;">
-        <button id="retry-btn" style="
-      background:#f39c12;
-      border:none;
-      color:white;
-      font-size:18px;
-      padding:10px 20px;
-      border-radius:6px;
-      cursor:pointer;
-      margin-top:15px;
-    ">Try Again 🔁</button>
-    `;
-            const retryBtn = document.getElementById("retry-btn");
-            retryBtn.addEventListener("click", restartQuiz);
+    <h2>Quiz Finished! 🎉</h2>
+    <p>Your Score: <strong>${score}/${quizData.length}</strong></p>
+    <p>${performance}</p>
+    <img src="${imgSrc}" width="100px" style="border-radius:10px; margin:10px;">
+    <button id="retry-btn">Try Again</button>
+  `;
+
+            document.getElementById("retry-btn").addEventListener("click", restartQuiz);
         }
-        showQuestion();
+
         function restartQuiz() {
             currentQuestion = 0;
             score = 0;
-            result.innerHTML = "";
+            totaltime = 60;
+            timerdisplay.textContent = totaltime;
+            result.style.display = "none";
+            questionshowOnscreen.style.display = "block";
+            optionshowOnscreen.style.display = "block";
+            nextBtn.style.display = "block";
             showQuestion();
+            startTimer();
         }
+
+
+        showQuestion();
+
     </script>
 </body>
 
