@@ -288,8 +288,8 @@
         const questionshowOnscreen = document.getElementById("question");
         const optionshowOnscreen = document.getElementById("optionforshow");
         const nextBtn = document.getElementById("next-btn");
-        const result = document.getElementById("result")
-        const timerdisplay = document.getElementById("time")
+        const result = document.getElementById("result");
+        const timerdisplay = document.getElementById("time");
 
 
 
@@ -304,7 +304,6 @@
                 }
             }, 1000);
         }
-        startTimer();
 
         function showQuestion() {
             result.style.display = "none";
@@ -343,7 +342,6 @@
             if (selected === correct) score++;
             nextBtn.style.display = "block";
         }
-
 
         nextBtn.addEventListener("click", () => {
             currentQuestion++;
@@ -399,9 +397,8 @@
             startTimer();
         }
 
-
         showQuestion();
-
+        startTimer();
     </script>
 </body>
 
