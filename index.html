@@ -281,6 +281,10 @@
 
         //Variables to Track State
 
+        const correctSound= new Audio('sounds/correct.mp3')
+        const wrongSound = new Audio('sounds/wrong.mp3');
+        const TimeupSound = new Audio('sounds/timesup.mp3');
+        const tryagain= new Audio ('sounds/tryagain.mp3')
         let currentQuestion = 0;
         let score = 0;
         let totaltime = 60;
@@ -339,7 +343,12 @@
                 }
             });
 
-            if (selected === correct) score++;
+            if (selected === correct) {
+                score++;
+                correctSound.play();
+            }else{
+                wrongSound.play();
+            }
             nextBtn.style.display = "block";
         }
 
@@ -354,6 +363,7 @@
 
         function showResult() {
             clearInterval(timer);
+            TimeupSound.play();
             questionshowOnscreen.style.display = "none";
             optionshowOnscreen.style.display = "none";
             nextBtn.style.display = "none";
@@ -385,6 +395,7 @@
         }
 
         function restartQuiz() {
+            tryagain.play()
             currentQuestion = 0;
             score = 0;
             totaltime = 60;
